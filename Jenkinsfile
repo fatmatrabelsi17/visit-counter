@@ -42,18 +42,25 @@ pipeline {
                 }
             }
             steps {
+                // Téléchargement des dépendances, réessayé en cas de coupure réseau
+                retry(3) {
+                    sh 'mvn -B -q dependency:go-offline'
+                }
                 // "package" compile, exécute les tests unitaires puis produit target/app.jar
                 sh 'mvn -B clean package'
             }
             post {
-                always { junit 'target/surefire-reports/*.xml' }
+                always { junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml' }
                 success { archiveArtifacts artifacts: 'target/app.jar', fingerprint: true }
             }
         }
 
         stage('Build image Docker') {
             steps {
-                sh 'docker build -t $IMAGE:$TAG -t $IMAGE:latest .'
+                // Réessayé si le téléchargement des images de base est interrompu
+                retry(3) {
+                    sh 'docker build -t $IMAGE:$TAG -t $IMAGE:latest .'
+                }
             }
         }
 
@@ -66,11 +73,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
                                                   usernameVariable: 'DH_USER',
                                                   passwordVariable: 'DH_TOKEN')]) {
-                    sh '''
-                      echo "$DH_TOKEN" | docker login -u "$DH_USER" --password-stdin
-                      docker push $IMAGE:$TAG
-                      docker push $IMAGE:latest
-                    '''
+                    sh 'echo "$DH_TOKEN" | docker login -u "$DH_USER" --password-stdin'
+                    retry(3) {
+                        sh 'docker push $IMAGE:$TAG'
+                        sh 'docker push $IMAGE:latest'
+                    }
                 }
             }
         }
