@@ -18,3 +18,5 @@ Démarrage rapide :
 docker compose up -d --build --scale web=3
 ```
 Puis ouvrir http://localhost
+
+Pipeline CI/CD : build automatique a chaque commit sur main.
