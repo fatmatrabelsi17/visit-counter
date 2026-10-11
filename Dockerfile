@@ -34,7 +34,8 @@ RUN mvn -B -q package -DskipTests
 #   - "alpine" : distribution minimale (~5 Mo) → moins de paquets, moins
 #     de failles, image plus rapide à télécharger
 #   - Temurin remplace l'image "openjdk" du tuto, aujourd'hui dépréciée
-# Résultat : ~200 Mo contre ~650 Mo pour openjdk:11 (Debian + JDK).
+# Résultat mesuré (docker images) : 324 Mo sur disque, 98,5 Mo compressés,
+# contre 470 Mo pour l'image du tuto (JRE sur base Debian).
 FROM eclipse-temurin:17-jre-alpine
 
 # Utilisateur système non privilégié : si l'application est compromise,
