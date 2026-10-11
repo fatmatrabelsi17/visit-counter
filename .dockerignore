@@ -1,0 +1,17 @@
+# Fichiers inutiles pour construire l'image (contexte de build plus petit et plus rapide)
+target/
+.git
+.gitignore
+.idea/
+*.iml
+.vscode/
+.env
+.mvn/
+mvnw
+mvnw.cmd
+Jenkinsfile
+jenkins/
+nginx/
+docker-compose.yml
+*.md
+*.ps1

@@ -1,0 +1,9 @@
+# Fins de ligne Linux (LF) : les fichiers sont utilisés dans des conteneurs Linux
+* text=auto eol=lf
+
+# Scripts Windows : fins de ligne Windows (CRLF)
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Fichiers binaires
+*.jar binary

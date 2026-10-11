@@ -1,0 +1,14 @@
+# Lancer Jenkins en local : docker compose -f jenkins/docker-compose.yml up -d --build
+# Interface : http://localhost:8081
+services:
+  jenkins:
+    build: .
+    user: root            # nécessaire pour utiliser /var/run/docker.sock (usage TP uniquement)
+    ports:
+      - "8081:8080"       # 8081 côté PC pour ne pas gêner l'application
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+volumes:
+  jenkins_home:
