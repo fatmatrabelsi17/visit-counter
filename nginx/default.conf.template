@@ -1,14 +1,19 @@
 # Au démarrage, l'image nginx remplace ${APP_PORT} par la valeur de .env.
 # Le DNS interne de Docker (127.0.0.11) résout "web" vers TOUTES les
-# répliques ; on le ré-interroge toutes les 10 s pour suivre le scaling.
+# répliques ; "resolve" le ré-interroge toutes les 10 s pour suivre le scaling.
 resolver 127.0.0.11 valid=10s;
+
+# Groupe des instances web : Nginx les utilise à tour de rôle (round robin)
+upstream web_backend {
+    zone web_backend 64k;
+    server web:${APP_PORT} resolve;
+}
 
 server {
     listen 80;
 
     location / {
-        set $backend http://web:${APP_PORT};
-        proxy_pass $backend;
+        proxy_pass http://web_backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
